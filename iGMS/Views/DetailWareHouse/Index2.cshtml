@@ -84,12 +84,12 @@
     <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function () {
-            BarcodeEnumrate()
             if (/Android/i.test(navigator.userAgent)) {
                 $("#HandHeld").show()
             } else {
                 $("#HandHeld").hide()
             }
+            BarcodeEnumrate()
         });
 
         $("#ScanMethod").change(function () {
@@ -122,7 +122,9 @@
                 }
             }
 
-            rfidTagQty(lstEpc)
+            if (lstEpc > 0) {
+                rfidTagQty(lstEpc)
+            }
         }
         function RFIDEnumrate() {
             EB.Barcode.disable()

@@ -85,13 +85,13 @@
                 <span name="warehouse"></span>
             </div>
         </div>
-       
-        <div class="form-group row"  id="HandHeld">
+
+        <div class="form-group row" id="HandHeld">
             <label for="example-search-input" class="col-2 col-form-label">Phương thức quét<span style="color:red"> (*Handheld)</span> </label>
             <div class="col-2">
                 <input type="checkbox" id="ScanMethod" checked data-toggle="toggle" data-on="Barcode" data-off="RFID" data-onstyle="success" data-offstyle="primary">
             </div>
-           
+
         </div>
 
         <div class="form-group  row tablenhan">
@@ -249,16 +249,22 @@
     </div>
 </div>
 @section scripts{
+    <script src="~/Scripts/Receipt.js"></script>
+    <script src="~/Scripts/ebapi-modules.js"></script>
+    <script src="~/Scripts/elements.js"></script>
+    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
     <script>
         $(document).ready(function () {
-            BarcodeEnumrate()
-        if (/Android/i.test(navigator.userAgent)) {
-           $("#HandHeld").show()
-        } else {
+          if (/Android/i.test(navigator.userAgent)) {
+            $("#HandHeld").show()
+                } else {
             $("#HandHeld").hide()
-        }
-        });
-        
+            }
+                
+            BarcodeEnumrate()
+            
+        })
         var d = new Date()
         $('#id').val(d.Day)
         $(document).ready(function () {
@@ -306,28 +312,29 @@
             })
         }
     </script>
-    <script src="~/Scripts/Receipt.js"></script>
-    <script src="~/Scripts/ebapi-modules.js"></script>
-    <script src="~/Scripts/elements.js"></script>
-    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
+
     <script type="text/javascript">
 
-      //Switch Toggle
+
+      
+       
+        //Switch Toggle
         $("#ScanMethod").change(function () {
             if ($(this).is(":checked")) {
+                alert('Bắt đầu quét Barcode')
                 console.log('bar')
-                /*BarcodeEnumrate()*/
+                BarcodeEnumrate()
                 getDetailGoodOrder()
 
             } else {
+                alert('Bắt đầu quét RFID')
                 console.log('rfid')
-                //RFIDEnumrate()
+                RFIDEnumrate()
                 getDetailGoodOrder()
 
             }
 
-        })
+        });
 
         //RFID
         var lstEpcSended = [];
@@ -343,24 +350,26 @@
                     lstEpcSended.push(epc)
                 }
             }
-
-            rfidTagQty(lstEpc)
+            if (lstEpc > 0) {
+                rfidTagQty(lstEpc)
+            }
+           
         }
         function RFIDEnumrate() {
             EB.Barcode.disable()
-
             rfid.transport = 'serial'
             rfid.enumerate();
             rfid.readerID = 'RFID1';
             rfid.connect();
-            alert('Bắt đầu quét RFID')
+
         }
 
 
         ///Kiem tra so luong bang rfid
         function rfidTagQty(epc) {
             $.ajax({
-                url: '/RFID/getBarcodeByEPC',
+                /* url: '/rfid/getbarcodebyepc',*/
+                url: 'https://webhook.site/64f70859-dd9f-4733-9275-d878cbffcce4',
                 type: 'POST',
                 data: {
                     tags: epc
@@ -381,16 +390,17 @@
 
         //Barcode
         // MC3300
-       
+
         function BarcodeEnumrate() {
             rfid.disconnect()
+
             EB.Barcode.enable({
                 allDecoders: true
             }, MouseCheck);
         }
 
         function MouseCheck(code) {
-            alert('Bắt đầu quét Barcode')
+            alert(code.data)
             var txt = getText(document.activeElement);
 
 
