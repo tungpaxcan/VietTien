@@ -323,15 +323,17 @@
             if ($(this).is(":checked")) {
                 alert('Bắt đầu quét Barcode')
                 console.log('bar')
-                BarcodeEnumrate()
+                
                 getDetailGoodOrder()
+                BarcodeEnumrate()
 
             } else {
                 alert('Bắt đầu quét RFID')
                 console.log('rfid')
-                RFIDEnumrate()
+                
                 getDetailGoodOrder()
-
+                EB.Barcode.disable()
+                RFIDEnumrate()
             }
 
         });
@@ -356,7 +358,7 @@
            
         }
         function RFIDEnumrate() {
-            EB.Barcode.disable()
+            
             rfid.transport = 'serial'
             rfid.enumerate();
             rfid.readerID = 'RFID1';
@@ -368,8 +370,8 @@
         ///Kiem tra so luong bang rfid
         function rfidTagQty(epc) {
             $.ajax({
-                /* url: '/rfid/getbarcodebyepc',*/
-                url: 'https://webhook.site/64f70859-dd9f-4733-9275-d878cbffcce4',
+                 url: '/rfid/getbarcodebyepc',
+                /*url: 'https://webhook.site/64f70859-dd9f-4733-9275-d878cbffcce4',*/
                 type: 'POST',
                 data: {
                     tags: epc
@@ -409,7 +411,7 @@
 
             } else {
 
-                fnBarcodeScanned(code.data)
+                CompareReceipt(code.data)
             }
 
         }
@@ -422,9 +424,7 @@
             return null;
         }
 
-        function fnBarcodeScanned(jsonObject) {
-            CompareReceipt(jsonObject);
-        }
+        
 
         function setPurchaseOrderText(code) {
             $('#purchaseorder').val(code)
